@@ -6,6 +6,7 @@ let h = 600; // altura do canvas
 let terrain = [];
 
 let graph;
+let food;
 
 function setup() {
   createCanvas(w, h);
@@ -25,9 +26,8 @@ function setup() {
   }
 
   graph = new Graph(cols * rows);
-}
-
-function draw() {
+  
+  
   background(255);
   
   for (let x = 0; x < cols; x++) {
@@ -57,6 +57,16 @@ function draw() {
   }
 
   graph.buildGraph(hexRadius);
+  
+  let partial_id = Math.floor(Math.random() * (cols * rows -1));
+  food = new Food(graph.getListNodes()[partial_id].getX(),graph.getListNodes()[partial_id].getY(), 'darkmeat1.png');
+  
+}
+
+function draw() {
+  
+  food.display();
+  
 }
 
 function drawHexagon(x, y, radius) {

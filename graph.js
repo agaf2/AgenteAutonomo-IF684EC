@@ -38,6 +38,10 @@ class Graph {
     getGraph(){
       return this.graph;
     }
+
+    getListNodes(){
+      return this.node_pos;
+    }
     
   }
   
