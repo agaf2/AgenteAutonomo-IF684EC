@@ -8,5 +8,13 @@ class Food{
     display() {
         image(this.img, this.x, this.y);
     }
+  
+    getX(){
+      return this.x;
+    }
+  
+    getY(){
+      return this.y;
+    }
     
 }

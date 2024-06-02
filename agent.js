@@ -20,35 +20,36 @@ class Agent{
     dfs(node, food_pos_x, food_pos_y, path=[]) {
         this.mark[node] = true;
         path.push(node);
-
-        if(this.getListNodes()[node].x == food_pos_x && this.getListNodes()[node].y == food_pos_y){
+        
+        if(this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y){
+            console.log("heuristic");
             return path;
         }
 
-        for (let neighbor of this.graph[node]) {
+        for (let neighbor of this.graph.getGraph()[node]) {
             let id_neighbor = neighbor.getSecond();
             let weight_neighbor = neighbor.getFirst();
-
-            if(!this.mark[id_neighbor] && weight_neighbor != 10000000009){
-                return this.dfs(id_neighbor);
+            
+            if(this.mark[id_neighbor] === false) { //&& weight_neighbor != 10000000009)
+              return this.dfs(id_neighbor, food_pos_x, food_pos_y, path);
             }
         }
 
         path.pop();
+        return path;
     }
 
     seek_first_method(food_x, food_y){ // DFS
         // builda o vetor dos marcados
-        this.mark = []
-        for(let i; i < this.graph.getHowManyNodes(); i++){
-            this.mark.push(false);
+        for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+          this.mark[i] = false;
         }
+      
         // chama a função dfs
-        path = []
-        path = this.dfs(this.my_node, food_x, food_y, path);
-
+        let path = this.dfs(this.my_node, food_x, food_y, []);
+        console.log(path);
         // Decodifica de ID para posição. Note que há uma relação bijetiva
-        ans = []
+        let ans = []
         for(let i; i < this.path.length; i++) {
             ans.push(graph.getListNodes()[this.path[i]]);
         }
