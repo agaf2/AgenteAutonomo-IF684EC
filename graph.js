@@ -42,6 +42,10 @@ class Graph {
     getListNodes(){
       return this.node_pos;
     }
+
+    getHowManyNodes(){
+      return this.maxn;
+    }
     
   }
   
