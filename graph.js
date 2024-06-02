@@ -29,7 +29,7 @@ class Graph {
       for(let i = 0; i < this.maxn; i++) {
         for(let j = 0; j < this.maxn; j++) {
           if(i != j && this.euclidianDistance(this.node_pos[i].getX(), this.node_pos[i].getY(), this.node_pos[j].getX(), this.node_pos[j].getY()) <= 2 * hex_radius * Math.sin(60 * (Math.PI / 180))) {
-             this.graph[i].push(new Pair(j, this.getWeight()));
+             this.graph[i].push(new Pair(this.getWeight(), j)); // O primeiro é o peso, o segundo o nó
           }
         }
       }
