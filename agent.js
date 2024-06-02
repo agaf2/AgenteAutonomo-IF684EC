@@ -30,7 +30,7 @@ class Agent{
             let id_neighbor = neighbor.getSecond();
             let weight_neighbor = neighbor.getFirst();
             
-            if(this.mark[id_neighbor] === false) { //&& weight_neighbor != 10000000009)
+            if(this.mark[id_neighbor] === false && weight_neighbor != 10000000009) { 
               return this.dfs(id_neighbor, food_pos_x, food_pos_y, path);
             }
         }
@@ -39,7 +39,7 @@ class Agent{
         return path;
     }
 
-    seek_first_method(food_x, food_y){ // DFS
+    find_first_method(food_x, food_y){ // DFS
         // builda o vetor dos marcados
         for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
           this.mark[i] = false;
@@ -50,13 +50,16 @@ class Agent{
         console.log(path);
         // Decodifica de ID para posição. Note que há uma relação bijetiva
         let ans = []
-        for(let i; i < this.path.length; i++) {
-            ans.push(graph.getListNodes()[this.path[i]]);
+        for(let i = 0; i < path.length; i++) {
+            ans.push(this.graph.getListNodes()[path[i]]);
         }
 
         return ans;
     }
 
+    seek(movement_list){
+
+    }
     
 
 }

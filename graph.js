@@ -32,7 +32,7 @@ class Graph {
        
         if(i != j && ((Math.abs(this.node_pos[i].getX() - this.node_pos[j].getX()) <= 2 * hex_radius && Math.abs(this.node_pos[i].getY() - this.node_pos[j].getY()) <= 2* hex_radius) )) {
 
-           this.graph[i].push(new Pair(1, j));
+          this.graph[i].push(new Pair(this.getWeight(this.node_pos[j].getTypeFloor()), j));
           
           this.how_many += 1;
           

@@ -64,7 +64,7 @@ function setup() {
   let agent_initial_pos = Math.floor(Math.random() * (cols * rows -1));
   agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, 'agent.png');
   
-  agent.seek_first_method(food.getX(), food.getY())
+  console.log(agent.find_first_method(food.getX(), food.getY()));
   
 }
 
