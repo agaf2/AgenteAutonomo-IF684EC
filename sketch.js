@@ -62,7 +62,7 @@ function setup() {
   food = new Food(graph.getListNodes()[partial_id].getX(),graph.getListNodes()[partial_id].getY(), 'darkmeat1.png');
   
   let agent_initial_pos = Math.floor(Math.random() * (cols * rows -1));
-  agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), 'agent.png');
+  agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, 'agent.png');
   
 }
 
