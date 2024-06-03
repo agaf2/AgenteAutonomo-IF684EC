@@ -1,5 +1,5 @@
 let cols, rows;
-let hexRadius = 10; // raio de cada hexágono
+let hexRadius = 20; // raio de cada hexágono
 let hexWidth, hexHeight;
 let w = 600; // largura do canvas
 let h = 600; // altura do canvas
@@ -43,12 +43,15 @@ function setup() {
       if (val < 0.3) { // 10% Água
         fill(51, 153, 255); // Terreno de custo alto (água)
         floor_ = 'w';
-      } else if (val < 0.6) { // 40% Areia
+      } else if (val < 0.4) { // 40% Areia
         fill(255, 204, 102); // Terreno de custo baixo (areia)
         floor_ = 's';
-      } else { // 50% Lama
+      } else if(val < 0.6) { // 50% Lama
         fill(153, 102, 51); // Terreno de custo médio (lama)
         floor_ = 'm';
+      }else{
+        fill(128, 128, 128);
+        floor_ = 'o';
       }
       
       drawHexagon(posX, posY, hexRadius);
@@ -58,13 +61,24 @@ function setup() {
 
   graph.buildGraph(hexRadius);
   
-  let partial_id = Math.floor(Math.random() * (cols * rows -1));
-  food = new Food(graph.getListNodes()[partial_id].getX(),graph.getListNodes()[partial_id].getY(), 'darkmeat1.png');
+  let food_initial_pos = Math.floor(Math.random() * (cols * rows -1));
+  
+  while(graph.getListNodes()[food_initial_pos].type_floor == 'o')
+    food_initial_pos = Math.floor(Math.random() * (cols * rows -1));
+  
+  food = new Food(graph.getListNodes()[food_initial_pos].getX(),graph.getListNodes()[food_initial_pos].getY(), 'darkmeat1.png');
   
   let agent_initial_pos = Math.floor(Math.random() * (cols * rows -1));
-  agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, 'agent.png');
   
-  console.log(agent.find_first_method(food.getX(), food.getY()));
+  while(graph.getListNodes()[agent_initial_pos].type_floor == 'o')
+    agent_initial_pos = Math.floor(Math.random() * (cols * rows -1));
+  
+  agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, hexRadius, 'agent.png');
+  
+  path = agent.find_first_method(food.getX(), food.getY())
+  console.log(path);
+  
+  agent.seek(path);
   
 }
 

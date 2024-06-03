@@ -30,9 +30,11 @@ class Graph {
     for(let i = 0; i < this.maxn; i++) {
       for(let j = 0; j < this.maxn; j++) {
        
-        if(i != j && ((Math.abs(this.node_pos[i].getX() - this.node_pos[j].getX()) <= 2 * hex_radius && Math.abs(this.node_pos[i].getY() - this.node_pos[j].getY()) <= 2* hex_radius) )) {
+        if(i != j && ((Math.abs(this.node_pos[i].getX() - this.node_pos[j].getX()) <= 2 * hex_radius && Math.abs(this.node_pos[i].getY() - this.node_pos[j].getY()) <= 2 * hex_radius) )) {
 
           this.graph[i].push(new Pair(this.getWeight(this.node_pos[j].getTypeFloor()), j));
+           this.graph[j].push(new Pair(this.getWeight(this.node_pos[i].getTypeFloor()), i));
+         
           
           this.how_many += 1;
           
@@ -50,7 +52,7 @@ class Graph {
       }
     }
   }
-  
+
   getGraph(){
     return this.graph;
   }
@@ -61,6 +63,10 @@ class Graph {
 
   getHowManyNodes(){
     return this.how_many;
+  }
+  
+  getNodeIndex(node) {
+    return this.node_pos.indexOf(node);
   }
   
 }

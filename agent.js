@@ -1,7 +1,8 @@
 class Agent{
-    constructor(graph, x, y, id_node, imgPath){
+    constructor(graph, x, y, id_node, hex_radius, imgPath){
         this.x = x;
         this.y = y;
+        this.hex_radius = hex_radius;
         this.my_node = id_node;
         this.speed = 0;
         this.graph = graph;
@@ -12,9 +13,21 @@ class Agent{
         this.img = loadImage(imgPath);
 
     }
+  
+  drawHexagon(x, y, radius) {
+  beginShape();
+  for (let i = 0; i < 6; i++) {
+    let angle = TWO_PI / 6 * i;
+    let xOffset = radius * cos(angle);
+    let yOffset = radius * sin(angle);
+    vertex(x + xOffset, y + yOffset);
+  }
+  endShape(CLOSE);
+}
 
     display() {
-        image(this.img, this.x, this.y);
+      image(this.img, this.x, this.y);
+      this.drawHexagon(this.x1, this.y1, this.hex_radius)
     }
 
     dfs(node, food_pos_x, food_pos_y, path=[]) {
@@ -30,12 +43,13 @@ class Agent{
             let id_neighbor = neighbor.getSecond();
             let weight_neighbor = neighbor.getFirst();
             
-            if(this.mark[id_neighbor] === false && weight_neighbor != 10000000009) { 
+            if(this.mark[id_neighbor] === false && weight_neighbor < 10000000009) { 
               return this.dfs(id_neighbor, food_pos_x, food_pos_y, path);
             }
         }
 
-        path.pop();
+        //path.pop();
+        this.mark[node] = false;
         return path;
     }
 
@@ -57,9 +71,29 @@ class Agent{
         return ans;
     }
 
-    seek(movement_list){
+  seek(movement_list) {
+    if (movement_list.length === 0) return;
 
-    }
+    let current = 0;
+    let moving = true;
+    
+    fill(255, 0, 0, 30); 
+
+    const move = () => {
+      if (current < movement_list.length && moving) {        
+        let node = movement_list[current];
+        this.x1 = node.getX();
+        this.y1 = node.getY();
+        this.pathNode = this.graph.getNodeIndex(node); 
+        current++;
+        setTimeout(move, 100);
+      } else {
+        moving = false;
+      }
+    };
+
+    move();
+  }
     
 
 }
