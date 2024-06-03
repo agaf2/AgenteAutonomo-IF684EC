@@ -29,30 +29,67 @@ class Agent{
     image(this.img, this.x, this.y);
     this.drawHexagon(this.x1, this.y1, this.hex_radius)
   }
+  
+  dfs_all_path(startNode, food_pos_x, food_pos_y) {
+    let stack = [];
+    let path2 = [];
+    this.mark[startNode] = true;
+    stack.push({ node: startNode, path: [startNode] });
+    path2.push(startNode);
 
-  dfs(node, food_pos_x, food_pos_y, path=[]) {
-    this.mark[node] = true;
-    path.push(node);
-    
-    if(this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y){
-        console.log("heuristic");
-        return path;
-    }
+    while (stack.length > 0) {
+        let { node, path } = stack.pop(); // Usando pop() para obter o último elemento da pilha (DFS)
 
-    for (let neighbor of this.graph.getGraph()[node]) {
-        let id_neighbor = neighbor.getSecond();
-        let weight_neighbor = neighbor.getFirst();
-        
-        if(this.mark[id_neighbor] === false && weight_neighbor < 10000000009) { 
-          return this.dfs(id_neighbor, food_pos_x, food_pos_y, path);
+        if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+            console.log("heuristic");
+            console.log("Path2: ", path2);
+            return path2;
+        }
+
+        for (let neighbor of this.graph.getGraph()[node]) {
+            let id_neighbor = neighbor.getSecond();
+            let weight_neighbor = neighbor.getFirst();
+
+            if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
+                this.mark[id_neighbor] = true;
+                stack.push({ node: id_neighbor, path: [...path, id_neighbor] }); // Adicionando ao final da pilha para DFS
+                path2.push(id_neighbor);
+            }
         }
     }
 
-    //path.pop();
-    this.mark[node] = false;
+    console.log("Path2: ", path2);
+    return path2;
+  }
+
+  dfs_ans(startNode, food_pos_x, food_pos_y) {
+    let stack = [];
+    let path = [];
+    this.mark[startNode] = true;
+    stack.push({ node: startNode, path: [startNode] });
+
+    while (stack.length > 0) {
+        let { node, path } = stack.pop(); // Usando pop() para obter o último elemento da pilha (DFS)
+
+        if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+            console.log("heuristic");
+            return path;
+        }
+
+        for (let neighbor of this.graph.getGraph()[node]) {
+            let id_neighbor = neighbor.getSecond();
+            let weight_neighbor = neighbor.getFirst();
+
+            if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
+                this.mark[id_neighbor] = true;
+                stack.push({ node: id_neighbor, path: [...path, id_neighbor] }); // Adicionando ao final da pilha para DFS
+            }
+        }
+    }
+
     return path;
   }
-  
+
   bfs_all_path(startNode, food_pos_x, food_pos_y) {
     let queue = [];
     let path2 = [];
@@ -115,22 +152,33 @@ class Agent{
 
 
   find_first_method(food_x, food_y){ // DFS
-    // builda o vetor dos marcados
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
-  
-    // chama a função dfs
-    //let path = this.dfs(this.my_node, food_x, food_y, []);
-    let path = this.bfs(this.my_node, food_x, food_y);
-    console.log(path);
-    // Decodifica de ID para posição. Note que há uma relação bijetiva
-    let ans = []
-    for(let i = 0; i < path.length; i++) {
-        ans.push(this.graph.getListNodes()[path[i]]);
+
+    let path2 = this.dfs_all_path(this.my_node, food_x, food_y);
+    console.log(path2);
+
+    let ans2 = [];
+    for (let i = 0; i < path2.length; i++) {
+        ans2.push(this.graph.getListNodes()[path2[i]]);
     }
 
-    return ans;
+    this.seek(ans2, 255, 0, 0, () => {
+      for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+          this.mark[i] = false;
+      }
+
+      let path = this.dfs_ans(this.my_node, food_x, food_y);
+      console.log(path);
+
+      let ans = [];
+      for (let i = 0; i < path.length; i++) {
+          ans.push(this.graph.getListNodes()[path[i]]);
+      }
+
+      this.seek(ans, 0, 255, 0);
+    });
   }
 
   find_second_method(food_x, food_y){ // DFS
