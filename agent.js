@@ -149,6 +149,75 @@ class Agent{
 
     return path;
   }
+  
+  dijkstra_all_path(src, food_pos_x, food_pos_y) {
+    const n = this.graph.getHowManyNodes();
+    let dist = Array(n).fill(Number.POSITIVE_INFINITY);
+    let pq = [];
+
+    dist[src] = 0;
+    pq.push({ distance: 0, node: src, path: [src] });
+
+    let visitedNodes = []; // Armazena todos os nós visitados durante a busca
+
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.distance - b.distance);
+      let { node, distance, path } = pq.shift();
+
+      if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+          visitedNodes.push(...path); // Adiciona todos os nós visitados ao vetor
+          return visitedNodes;
+      }
+
+      if (distance > dist[node]) continue;
+
+      for (let edge of this.graph.getGraph()[node]) {
+          let weight = edge.getFirst();
+          let neighbor = edge.getSecond();
+
+          if (dist[neighbor] > dist[node] + weight) {
+              dist[neighbor] = dist[node] + weight;
+              pq.push({ distance: dist[neighbor], node: neighbor, path: [...path, neighbor] });
+          }
+      }
+
+      visitedNodes.push(node); // Adiciona o nó atual ao vetor de nós visitados
+  }
+
+  return visitedNodes;
+}
+
+  dijkstra_ans(src, food_pos_x, food_pos_y) {
+    const n = this.graph.getHowManyNodes();
+    let dist = Array(n).fill(Number.POSITIVE_INFINITY);
+    let pq = [];
+
+    dist[src] = 0;
+    pq.push({ distance: 0, node: src, path: [src] });
+
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.distance - b.distance);
+      let { node, distance, path } = pq.shift();
+
+      if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+          return path;
+      }
+
+      if (distance > dist[node]) continue;
+
+      for (let edge of this.graph.getGraph()[node]) {
+          let weight = edge.getFirst();
+          let neighbor = edge.getSecond();
+
+          if (dist[neighbor] > dist[node] + weight) {
+              dist[neighbor] = dist[node] + weight;
+              pq.push({ distance: dist[neighbor], node: neighbor, path: [...path, neighbor] });
+          }
+      }
+    }
+
+    return [];
+  }
 
 
   find_first_method(food_x, food_y){ // DFS
@@ -200,6 +269,36 @@ class Agent{
       }
 
       let path = this.bfs_ans(this.my_node, food_x, food_y);
+      console.log(path);
+
+      let ans = [];
+      for (let i = 0; i < path.length; i++) {
+          ans.push(this.graph.getListNodes()[path[i]]);
+      }
+
+      this.seek(ans, 0, 255, 0);
+    });
+  }
+  
+  find_third_method(food_x, food_y){ // DFS
+    for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+      this.mark[i] = false;
+    }
+
+    let path2 = this.dijkstra_all_path(this.my_node, food_x, food_y);
+    console.log(path2);
+
+    let ans2 = [];
+    for (let i = 0; i < path2.length; i++) {
+        ans2.push(this.graph.getListNodes()[path2[i]]);
+    }
+
+    this.seek(ans2, 255, 0, 0, () => {
+      for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+          this.mark[i] = false;
+      }
+
+      let path = this.dijkstra_ans(this.my_node, food_x, food_y);
       console.log(path);
 
       let ans = [];
