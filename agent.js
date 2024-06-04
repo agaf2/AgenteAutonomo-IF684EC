@@ -29,6 +29,13 @@ class Agent{
     image(this.img, this.x, this.y);
     this.drawHexagon(this.x1, this.y1, this.hex_radius)
   }
+
+  manhattanDistance(node, food_pos_x, food_pos_y) {
+    let nodeX = this.graph.getListNodes()[node].getX();
+    let nodeY = this.graph.getListNodes()[node].getY();
+    
+    return Math.abs(nodeX - food_pos_x) + Math.abs(nodeY - food_pos_y);
+  }
   
   dfs_all_path(startNode, food_pos_x, food_pos_y) {
     let stack = [];
@@ -182,10 +189,10 @@ class Agent{
       }
 
       visitedNodes.push(node); // Adiciona o nó atual ao vetor de nós visitados
-  }
+    }
 
-  return visitedNodes;
-}
+    return visitedNodes;
+  }
 
   dijkstra_ans(src, food_pos_x, food_pos_y) {
     const n = this.graph.getHowManyNodes();
@@ -217,6 +224,73 @@ class Agent{
     }
 
     return [];
+  }
+
+
+  gbfs_all_path(startNode, food_pos_x, food_pos_y) {
+    let queue = [];
+    let path2 = [];
+    this.mark[startNode] = true;
+    queue.push({ node: startNode, path: [startNode] });
+    path2.push(startNode);
+
+    while (queue.length > 0) {
+        let { node, path } = queue.shift();
+
+        if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+            console.log("heuristic");
+            console.log("Path2: ", path2);
+            return path2;
+        }
+
+        let neighbors = this.graph.getGraph()[node];
+        neighbors.sort((a, b) => this.manhattanDistance(a.getSecond(), food_pos_x, food_pos_y) - this.manhattanDistance(b.getSecond(), food_pos_x, food_pos_y));
+
+        for (let neighbor of neighbors) {
+            let id_neighbor = neighbor.getSecond();
+            let weight_neighbor = neighbor.getFirst();
+
+            if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
+                this.mark[id_neighbor] = true;
+                queue.push({ node: id_neighbor, path: [...path, id_neighbor] });
+                path2.push(id_neighbor); // Adiciona o nó vizinho aos nós visitados
+            }
+        }
+    }
+
+    console.log("Path2: ", path2);
+    return path2;
+  }
+
+  gbfs_ans(startNode, food_pos_x, food_pos_y) {
+    let queue = [];
+    let path = [];
+    this.mark[startNode] = true;
+    queue.push({ node: startNode, path: [startNode] });
+
+    while (queue.length > 0) {
+        let { node, path } = queue.shift();
+
+        if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+            console.log("heuristic");
+            return path;
+        }
+
+        let neighbors = this.graph.getGraph()[node];
+        neighbors.sort((a, b) => this.manhattanDistance(a.getSecond(), food_pos_x, food_pos_y) - this.manhattanDistance(b.getSecond(), food_pos_x, food_pos_y));
+
+        for (let neighbor of neighbors) {
+            let id_neighbor = neighbor.getSecond();
+            let weight_neighbor = neighbor.getFirst();
+
+            if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
+                this.mark[id_neighbor] = true;
+                queue.push({ node: id_neighbor, path: [...path, id_neighbor] });
+            }
+        }
+    }
+
+    return path;
   }
 
 
@@ -310,6 +384,36 @@ class Agent{
     });
   }
 
+  find_fourth_method(food_x, food_y) { // GBFS
+    for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+      this.mark[i] = false;
+    }
+
+    let path2 = this.gbfs_all_path(this.my_node, food_x, food_y);
+    console.log(path2);
+
+    let ans2 = [];
+    for (let i = 0; i < path2.length; i++) {
+        ans2.push(this.graph.getListNodes()[path2[i]]);
+    }
+
+    this.seek(ans2, 255, 0, 0, () => {
+      for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+          this.mark[i] = false;
+      }
+
+      let path = this.gbfs_ans(this.my_node, food_x, food_y);
+      console.log(path);
+
+      let ans = [];
+      for (let i = 0; i < path.length; i++) {
+          ans.push(this.graph.getListNodes()[path[i]]);
+      }
+
+      this.seek(ans, 0, 255, 0);
+    });
+  }
+  
   seek(movement_list, r, g, b, callback) {
     if (movement_list.length === 0) return;
 
