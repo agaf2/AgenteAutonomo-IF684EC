@@ -33,7 +33,7 @@ class Agent{
   manhattanDistance(node, food_pos_x, food_pos_y) {
     let nodeX = this.graph.getListNodes()[node].getX();
     let nodeY = this.graph.getListNodes()[node].getY();
-    
+
     return Math.abs(nodeX - food_pos_x) + Math.abs(nodeY - food_pos_y);
   }
   
@@ -228,14 +228,14 @@ class Agent{
 
 
   gbfs_all_path(startNode, food_pos_x, food_pos_y) {
-    let queue = [];
+    let priorityQueue = [];
     let path2 = [];
     this.mark[startNode] = true;
-    queue.push({ node: startNode, path: [startNode] });
+    priorityQueue.push({ node: startNode, path: [startNode] });
     path2.push(startNode);
 
-    while (queue.length > 0) {
-        let { node, path } = queue.shift();
+    while (priorityQueue.length > 0) {
+        let { node, path } = priorityQueue.shift();
 
         if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
             console.log("heuristic");
@@ -252,7 +252,7 @@ class Agent{
 
             if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
                 this.mark[id_neighbor] = true;
-                queue.push({ node: id_neighbor, path: [...path, id_neighbor] });
+                priorityQueue.push({ node: id_neighbor, path: [...path, id_neighbor] });
                 path2.push(id_neighbor); // Adiciona o nó vizinho aos nós visitados
             }
         }
@@ -263,13 +263,13 @@ class Agent{
   }
 
   gbfs_ans(startNode, food_pos_x, food_pos_y) {
-    let queue = [];
+    let priorityQueue = [];
     let path = [];
     this.mark[startNode] = true;
-    queue.push({ node: startNode, path: [startNode] });
+    priorityQueue.push({ node: startNode, path: [startNode] });
 
-    while (queue.length > 0) {
-        let { node, path } = queue.shift();
+    while (priorityQueue.length > 0) {
+        let { node, path } = priorityQueue.shift();
 
         if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
             console.log("heuristic");
@@ -285,7 +285,7 @@ class Agent{
 
             if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
                 this.mark[id_neighbor] = true;
-                queue.push({ node: id_neighbor, path: [...path, id_neighbor] });
+                priorityQueue.push({ node: id_neighbor, path: [...path, id_neighbor] });
             }
         }
     }
