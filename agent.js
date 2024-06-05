@@ -14,6 +14,7 @@ class Agent{
 
   }
 
+
   drawHexagon(x, y, radius) {
     beginShape();
     for (let i = 0; i < 6; i++) {
@@ -193,7 +194,7 @@ class Agent{
 
     return visitedNodes;
   }
-
+  
   dijkstra_ans(src, food_pos_x, food_pos_y) {
     const n = this.graph.getHowManyNodes();
     let dist = Array(n).fill(Number.POSITIVE_INFINITY);
@@ -225,7 +226,6 @@ class Agent{
 
     return [];
   }
-
 
   gbfs_all_path(startNode, food_pos_x, food_pos_y) {
     let queue = [];
@@ -293,13 +293,85 @@ class Agent{
     return path;
   }
 
-  astar_all_path(startNode, food_pos_x, food_pos_y) {
+  astar_all_path(src, food_pos_x, food_pos_y) {
     const n = this.graph.getHowManyNodes();
-    let priorityQueue = [];
-    
-  
+    let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
+    let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
+    let pq = [];
+
+    gcost[src] = 0;
+    fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
+
+    pq.push({ f: fcost[src], g: gcost[src] ,  node: src, path: [src] });
+
+    let visitedNodes = []; // Armazena todos os nós visitados durante a busca
+
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.f - b.f);
+      let { node, path, g } = pq.shift();
+
+      if(this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y){
+        visitedNodes.push(...path);
+        return visitedNodes;
+      }
+
+      if(fcost[node] < g) continue;
+
+      for(let edge of this.graph.getGraph()[node]){
+        let weight = edge.getFirst();
+        let neighbor = edge.getSecond();
+
+        let tentative_g = g + weight;
+
+        if(tentative_g < gcost[neighbor]){
+          path.push(neighbor);
+          gcost[neighbor] = tentative_g;
+          fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
+          pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor, path: [...path] });
+        }
+      }
+      visitedNodes.push(node);
+
+    }
+      return visitedNodes;
   }
 
+  astar_ans(src, food_pos_x, food_pos_y) {
+    const n = this.graph.getHowManyNodes();
+    let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
+    let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
+    let pq = [];
+
+    gcost[src] = 0;
+    fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
+
+    pq.push({ f: fcost[src], g: gcost[src] ,  node: src, path: [src] });
+
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.f - b.f);
+      let { node, g, path } = pq.shift();
+
+      if(this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+        return path;
+      }
+      
+      if(fcost[src] < g) continue;
+
+      for(let edge of this.graph.getGraph()[node]){
+        let weight = edge.getFirst();
+        let neighbor = edge.getSecond();
+
+        let tentative_g = g + weight;
+
+        if(tentative_g < gcost[neighbor]){
+          gcost[neighbor] = tentative_g;
+          fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
+          pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor, path: [...path, neighbor] });
+        }
+      }
+    }
+    return []; // não foi encontrado caminho
+  }
 
   find_first_method(food_x, food_y){ // DFS
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
@@ -361,7 +433,7 @@ class Agent{
     });
   }
   
-  find_third_method(food_x, food_y){ // DFS
+  find_third_method(food_x, food_y){ // Dijkstra
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
@@ -410,6 +482,36 @@ class Agent{
       }
 
       let path = this.gbfs_ans(this.my_node, food_x, food_y);
+      console.log(path);
+
+      let ans = [];
+      for (let i = 0; i < path.length; i++) {
+          ans.push(this.graph.getListNodes()[path[i]]);
+      }
+
+      this.seek(ans, 0, 255, 0);
+    });
+  }
+
+  find_fifth_method(food_x, food_y) {
+    for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+      this.mark[i] = false;
+    }
+
+    let path2 = this.astar_all_path(this.my_node, food_x, food_y);
+    console.log(path2);
+
+    let ans2 = [];
+    for (let i = 0; i < path2.length; i++) {
+        ans2.push(this.graph.getListNodes()[path2[i]]);
+    }
+
+    this.seek(ans2, 255, 0, 0, () => {
+      for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
+          this.mark[i] = false;
+      }
+
+      let path = this.astar_ans(this.my_node, food_x, food_y);
       console.log(path);
 
       let ans = [];
