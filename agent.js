@@ -182,6 +182,11 @@ class Agent{
       for (let edge of this.graph.getGraph()[node]) {
           let weight = edge.getFirst();
           let neighbor = edge.getSecond();
+        
+         // Verifica se a aresta é um obstáculo
+          if (weight >= 10000000009) {
+              continue;
+          }
 
           if (dist[neighbor] > dist[node] + weight) {
               dist[neighbor] = dist[node] + weight;
@@ -216,6 +221,11 @@ class Agent{
       for (let edge of this.graph.getGraph()[node]) {
           let weight = edge.getFirst();
           let neighbor = edge.getSecond();
+        
+         // Verifica se a aresta é um obstáculo
+          if (weight >= 10000000009) {
+              continue;
+          }
 
           if (dist[neighbor] > dist[node] + weight) {
               dist[neighbor] = dist[node] + weight;
