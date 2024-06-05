@@ -1,21 +1,15 @@
-class Node {
-  constructor(x, y, type_floor) {
-    this.x = x;
-    this.y = y;
-    this.type_floor = type_floor;
-    
+class Pair {
+  constructor(first_, second_) {
+    this.first_ = first_;
+    this.second_ = second_;
   }
 
-  getX(){
-    return this.x;
+  getFirst(){
+    return this.first_;
   }
   
-  getY(){
-    return this.y;
+  getSecond(){
+    return this.second_;
   }
-  
-  getTypeFloor(){
-    return this.type_floor;
-  }
-  
+
 }
