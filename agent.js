@@ -331,6 +331,8 @@ class Agent{
         let weight = edge.getFirst();
         let neighbor = edge.getSecond();
 
+        if(weight >= 10000000009) continue;
+        
         let tentative_g = g + weight;
 
         if(tentative_g < gcost[neighbor]){
@@ -371,6 +373,8 @@ class Agent{
         let weight = edge.getFirst();
         let neighbor = edge.getSecond();
 
+        if(weight >= 10000000009) continue;
+        
         let tentative_g = g + weight;
 
         if(tentative_g < gcost[neighbor]){
