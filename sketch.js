@@ -8,7 +8,45 @@ let terrain = [];
 let graph;
 let food;
 
-function setup() {
+let selectedAlgo = false
+let currentMethod = ""
+let buttons = []
+
+buttonRenameMap = {
+  'find_first_method': 'DFS',
+  'find_second_method': 'BFS', 
+  'find_third_method': 'Dijkstra', 
+  'find_fourth_method': 'GBFS',
+  'find_fifth_method': 'A*',
+}
+
+function generateMenu() {
+  const algorithms = ['find_first_method', 'find_second_method', 'find_third_method', 'find_fourth_method', 'find_fifth_method']
+
+  createCanvas(w, h);
+  background(225);
+  
+  textSize(30)
+  stroke(200);
+  strokeWeight(4);
+  text('Select algorithm:', 180, 80)
+  
+  algorithms.forEach((method, index) => {
+    let btn = createButton(`Use ${buttonRenameMap[method]}`)
+    btn.size(200, 40)
+    btn.position(200, 140 + index * 50)
+    buttons.push(btn)
+    btn.mousePressed(() => {
+      currentMethod = method
+      console.log(`Selected ${currentMethod}`)
+      selectedAlgo = true
+      buttons.forEach((button) => button.hide())
+      run()
+    })
+  })
+}
+
+function run(){
   createCanvas(w, h);
   hexWidth = sqrt(3) * hexRadius;
   hexHeight = 2 * hexRadius * 0.75;
@@ -75,18 +113,21 @@ function setup() {
   
   agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, hexRadius, 'agent.png');
   
-  agent.find_fifth_method(food.getX(), food.getY())
+  agent[currentMethod](food.getX(), food.getY())
   //console.log(path);
   
   //agent.seek(path);
-  
+}
+
+function setup() {
+    generateMenu()
 }
 
 function draw() {
-  
-  food.display();
-  agent.display();
-  
+  if (selectedAlgo) {
+    food.display();
+    agent.display();
+  }
 }
 
 function drawHexagon(x, y, radius) {
