@@ -75,7 +75,7 @@ function setup() {
   
   agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, hexRadius, 'agent.png');
   
-  agent.find_fourth_method(food.getX(), food.getY())
+  agent.find_fifth_method(food.getX(), food.getY())
   //console.log(path);
   
   //agent.seek(path);

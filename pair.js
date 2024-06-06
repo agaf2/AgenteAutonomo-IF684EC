@@ -1,6 +1,6 @@
 class Pair {
   constructor(first_, second_) {
-    this.first = first_;
+    this.first_ = first_;
     this.second_ = second_;
   }
 

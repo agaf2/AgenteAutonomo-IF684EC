@@ -183,7 +183,7 @@ class Agent{
           let weight = edge.getFirst();
           let neighbor = edge.getSecond();
         
-         // Verifica se a aresta é um obstáculo
+         // Verifique se a aresta é um obstáculo
           if (weight >= 10000000009) {
               continue;
           }
@@ -222,7 +222,7 @@ class Agent{
           let weight = edge.getFirst();
           let neighbor = edge.getSecond();
         
-         // Verifica se a aresta é um obstáculo
+         // Verifique se a aresta é um obstáculo
           if (weight >= 10000000009) {
               continue;
           }
