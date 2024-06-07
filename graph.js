@@ -39,14 +39,14 @@ class Graph {
           this.how_many += 1;
           
           // Desenha o ponto verde
-          stroke(0, 255, 0); // Verde
-          strokeWeight(5); // Espessura do ponto
-          point(this.node_pos[i].getX(), this.node_pos[i].getY());
+          //stroke(0, 255, 0); // Verde
+          //strokeWeight(5); // Espessura do ponto
+          //point(this.node_pos[i].getX(), this.node_pos[i].getY());
 
           // Desenha a linha preta
-          stroke(0); // Preto
-          strokeWeight(1); // Espessura da linha
-          line(this.node_pos[i].getX(), this.node_pos[i].getY(), this.node_pos[j].getX(), this.node_pos[j].getY());
+          //stroke(0); // Preto
+          //strokeWeight(1); // Espessura da linha
+          //line(this.node_pos[i].getX(), this.node_pos[i].getY(), this.node_pos[j].getX(), this.node_pos[j].getY());
 
         }
       }

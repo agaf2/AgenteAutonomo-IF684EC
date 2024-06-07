@@ -11,6 +11,8 @@ class Agent{
       this.current = 0;
       this.finished = false;
       this.img = loadImage(imgPath);
+      this.moving = false;
+      this.how_many_foods = 0;
 
   }
 
@@ -126,7 +128,7 @@ class Agent{
         }
     }
 
-    console.log("Path2: ", path2);
+    //console.log("Path2: ", path2);
     return path2;
   }
 
@@ -140,7 +142,7 @@ class Agent{
         let { node, path } = queue.shift();
 
         if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
-            console.log("heuristic");
+            //console.log("heuristic");
             return path;
         }
 
@@ -248,8 +250,8 @@ class Agent{
         let { node, path } = queue.shift();
 
         if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
-            console.log("heuristic");
-            console.log("Path2: ", path2);
+            //console.log("heuristic");
+            //console.log("Path2: ", path2);
             return path2;
         }
 
@@ -268,7 +270,7 @@ class Agent{
         }
     }
 
-    console.log("Path2: ", path2);
+    //console.log("Path2: ", path2);
     return path2;
   }
 
@@ -412,6 +414,8 @@ class Agent{
       for (let i = 0; i < path.length; i++) {
           ans.push(this.graph.getListNodes()[path[i]]);
       }
+      
+      if(path.length > 0) this.how_many_foods++;
 
       this.seek(ans, 0, 255, 0);
     });
@@ -442,7 +446,7 @@ class Agent{
       for (let i = 0; i < path.length; i++) {
           ans.push(this.graph.getListNodes()[path[i]]);
       }
-
+      if(path.length > 0) this.how_many_foods++;
       this.seek(ans, 0, 255, 0);
     });
   }
@@ -472,7 +476,7 @@ class Agent{
       for (let i = 0; i < path.length; i++) {
           ans.push(this.graph.getListNodes()[path[i]]);
       }
-
+      if(path.length > 0) this.how_many_foods++;
       this.seek(ans, 0, 255, 0);
     });
   }
@@ -502,7 +506,7 @@ class Agent{
       for (let i = 0; i < path.length; i++) {
           ans.push(this.graph.getListNodes()[path[i]]);
       }
-
+      if(path.length > 0) this.how_many_foods++;
       this.seek(ans, 0, 255, 0);
     });
   }
@@ -532,7 +536,7 @@ class Agent{
       for (let i = 0; i < path.length; i++) {
           ans.push(this.graph.getListNodes()[path[i]]);
       }
-
+      if(ans.length > 0) this.how_many_foods++;
       this.seek(ans, 0, 255, 0);
     });
   }
@@ -541,25 +545,32 @@ class Agent{
     if (movement_list.length === 0) return;
 
     let current = 0;
-    let moving = true;
+    this.moving = true;
 
     fill(r, g, b, 50);
 
     const move = () => {
-      if (current < movement_list.length && moving) {
+      if (current < movement_list.length && this.moving) {
           let node = movement_list[current];
           this.x1 = node.getX();
           this.y1 = node.getY();
           current++;
           setTimeout(move, 100);
       } else {
-          moving = false;
+          this.moving = false;
           if (callback) callback();
       }
     };
 
     move();
   }
-
+  
+  getIsMoving() {
+    return this.moving;
+  }
+  
+  getHowManyFoods() {
+    return this.how_many_foods;
+  }
 
 }

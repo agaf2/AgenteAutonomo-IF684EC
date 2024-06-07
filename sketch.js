@@ -7,10 +7,13 @@ let terrain = [];
 
 let graph;
 let food;
+let agent = null;
 
 let selectedAlgo = false
 let currentMethod = ""
 let buttons = []
+
+let acc_foods = 0;
 
 buttonRenameMap = {
   'find_first_method': 'DFS',
@@ -38,12 +41,21 @@ function generateMenu() {
     buttons.push(btn)
     btn.mousePressed(() => {
       currentMethod = method
-      console.log(`Selected ${currentMethod}`)
+      //console.log(`Selected ${currentMethod}`)
       selectedAlgo = true
       buttons.forEach((button) => button.hide())
       run()
     })
   })
+  
+  textSize(15)
+  stroke(200);
+  strokeWeight(4);
+  if(agent) {
+    text('Comidas coletadas pelo agente: ' + acc_foods, 80, 500)
+    //if(agent.getHowManyFoods() === 0) acc_foods++;
+  }
+  else text('Comidas coletadas pelo agente: 0', 80, 500)
 }
 
 function run(){
@@ -64,7 +76,6 @@ function run(){
   }
 
   graph = new Graph(cols * rows);
-  
   
   background(255);
   
@@ -113,10 +124,10 @@ function run(){
   
   agent = new Agent(graph, graph.getListNodes()[agent_initial_pos].getX(),graph.getListNodes()[agent_initial_pos].getY(), agent_initial_pos, hexRadius, 'agent.png');
   
-  agent[currentMethod](food.getX(), food.getY())
-  //console.log(path);
+  acc_foods++;
   
-  //agent.seek(path);
+  agent[currentMethod](food.getX(), food.getY())
+
 }
 
 function setup() {
@@ -127,7 +138,14 @@ function draw() {
   if (selectedAlgo) {
     food.display();
     agent.display();
+    
+    if(agent.getIsMoving() === false) generateMenu();
+    
+    console.log(agent.getHowManyFoods())
+    
   }
+  
+
 }
 
 function drawHexagon(x, y, radius) {
