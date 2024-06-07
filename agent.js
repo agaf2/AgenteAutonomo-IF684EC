@@ -310,44 +310,53 @@ class Agent{
     let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
     let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
     let pq = [];
-
+  
     gcost[src] = 0;
     fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
-
-    pq.push({ f: fcost[src], g: gcost[src] ,  node: src, path: [src] });
-
-    let visitedNodes = []; // Armazena todos os nós visitados durante a busca
-
+  
+    pq.push({ f: fcost[src], g: gcost[src], node: src });
+  
+    let visitedNodes = new Set(); 
+    let cameFrom = new Map();
+  
     while (pq.length > 0) {
       pq.sort((a, b) => a.f - b.f);
-      let { node, path, g } = pq.shift();
-
-      if(this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y){
-        visitedNodes.push(...path);
-        return visitedNodes;
+      let { node, g } = pq.shift();
+  
+      if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+        return this.reconstruct_path(cameFrom, node);
       }
-
-      if(fcost[node] < g) continue;
-
-      for(let edge of this.graph.getGraph()[node]){
+  
+      if (visitedNodes.has(node)) continue;
+  
+      visitedNodes.add(node);
+  
+      for (let edge of this.graph.getGraph()[node]) {
         let weight = edge.getFirst();
         let neighbor = edge.getSecond();
-
-        if(weight >= 10000000009) continue;
-        
+  
+        if (weight >= 10000000009) continue;
+  
         let tentative_g = g + weight;
-
-        if(tentative_g < gcost[neighbor]){
-          path.push(neighbor);
+  
+        if (tentative_g < gcost[neighbor]) {
+          cameFrom.set(neighbor, node);
           gcost[neighbor] = tentative_g;
           fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
-          pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor, path: [...path] });
+          pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor });
         }
       }
-      visitedNodes.push(node);
-
     }
-      return visitedNodes;
+    return []; // não foi encontrado caminho
+  }
+  
+  reconstruct_path(cameFrom, current) {
+    let total_path = [current];
+    while (cameFrom.has(current)) {
+      current = cameFrom.get(current);
+      total_path.unshift(current);
+    }
+    return total_path;
   }
 
   astar_ans(src, food_pos_x, food_pos_y) {
