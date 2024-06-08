@@ -65,8 +65,13 @@ class Graph {
     return this.how_many;
   }
   
-  getNodeIndex(node) {
-    return this.node_pos.indexOf(node);
+  getNodeIndex(x1,y1) {
+    for(let i=0;i<this.node_pos.length;i++) if(this.node_pos[i].x == x1, this.node_pos[i].y == y1) return i;
+    return -1;
+  }
+  
+  getNode(id) {
+    return this.node_pos[id]
   }
   
 }

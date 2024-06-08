@@ -18,8 +18,8 @@ let acc_foods = 0;
 buttonRenameMap = {
   'find_first_method': 'DFS',
   'find_second_method': 'BFS', 
-  'find_third_method': 'Dijkstra', 
-  'find_fourth_method': 'GBFS',
+  'find_third_method': 'Custo uniforme', 
+  'find_fourth_method': 'Guloso',
   'find_fifth_method': 'A*',
 }
 
@@ -139,9 +139,11 @@ function draw() {
     food.display();
     agent.display();
     
-    if(agent.getIsMoving() === false) generateMenu();
-    
-    console.log(agent.getHowManyFoods())
+    if(agent.getIsMoving() === false) {
+      setTimeout(generateMenu(), 100000);
+      
+    }
+    //
     
   }
   

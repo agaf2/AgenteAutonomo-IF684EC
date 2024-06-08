@@ -13,6 +13,8 @@ class Agent{
       this.img = loadImage(imgPath);
       this.moving = false;
       this.how_many_foods = 0;
+      this.general_path = false;
+      this.adj_visited = []
 
   }
 
@@ -29,8 +31,32 @@ class Agent{
   }
 
   display() {
-    image(this.img, this.x, this.y);
+    if(this.general_path === true) {
+          image(this.img, this.x, this.y);
     this.drawHexagon(this.x1, this.y1, this.hex_radius)
+      this.adj_visited.push(new Pair(this.x1, this.y1))
+      //seta amarelo
+      fill(255, 255, 0, 3)
+      console.log("node adj here: " + this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)))
+      if(this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1, this.y1  - (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
+      
+      if(this.itWasVisited(this.x1, this.y1  + (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
+        //if(this.mark[this.graph.getNodeIndex(this.x1,this.y1  + (1.732 * this.hex_radius))] === false) this.drawHexagon(this.x1 , this.y1  + (1.732 * this.hex_radius), this.hex_radius)
+      //this.drawHexagon(this.x1 , this.y1  -(2.1 * this.hex_radius), this.hex_radius)
+      //this.drawHexagon(this.x1 , this.y1 +(2.1 * this.hex_radius), this.hex_radius)
+
+
+      fill(255,0,0, 30)
+
+    }else {
+          image(this.img, this.x, this.y);
+    this.drawHexagon(this.x1, this.y1, this.hex_radius)
+    }
+    
   }
 
   manhattanDistance(node, food_pos_x, food_pos_y) {
@@ -306,59 +332,59 @@ class Agent{
   }
 
   astar_all_path(src, food_pos_x, food_pos_y) {
-    const n = this.graph.getHowManyNodes();
-    let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
-    let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
-    let pq = [];
-  
-    gcost[src] = 0;
-    fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
-  
-    pq.push({ f: fcost[src], g: gcost[src], node: src });
-  
-    let visitedNodes = new Set(); 
-    let cameFrom = new Map();
-  
-    while (pq.length > 0) {
-      pq.sort((a, b) => a.f - b.f);
-      let { node, g } = pq.shift();
-  
-      if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
-        return this.reconstruct_path(cameFrom, node);
-      }
-  
-      if (visitedNodes.has(node)) continue;
-  
-      visitedNodes.add(node);
-  
-      for (let edge of this.graph.getGraph()[node]) {
-        let weight = edge.getFirst();
-        let neighbor = edge.getSecond();
-  
-        if (weight >= 10000000009) continue;
-  
-        let tentative_g = g + weight;
-  
-        if (tentative_g < gcost[neighbor]) {
-          cameFrom.set(neighbor, node);
-          gcost[neighbor] = tentative_g;
-          fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
-          pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor });
-        }
-      }
-    }
-    return []; // não foi encontrado caminho
-  }
-  
-  reconstruct_path(cameFrom, current) {
-    let total_path = [current];
-    while (cameFrom.has(current)) {
-      current = cameFrom.get(current);
-      total_path.unshift(current);
-    }
-    return total_path;
-  }
+  const n = this.graph.getHowManyNodes();
+  let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
+  let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
+  let pq = [];
 
+  gcost[src] = 0;
+  fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
+
+  pq.push({ f: fcost[src], g: gcost[src], node: src });
+
+  let visitedNodes = new Set(); // Stores all nodes visited during the search
+  let cameFrom = new Map(); // Stores the path taken to reach each node
+
+  while (pq.length > 0) {
+    pq.sort((a, b) => a.f - b.f);
+    let { node, g } = pq.shift();
+
+    if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+      return this.reconstruct_path(cameFrom, node);
+    }
+
+    if (visitedNodes.has(node)) continue;
+
+    visitedNodes.add(node);
+
+    for (let edge of this.graph.getGraph()[node]) {
+      let weight = edge.getFirst();
+      let neighbor = edge.getSecond();
+
+      if (weight >= 10000000009) continue;
+
+      let tentative_g = g + weight;
+
+      if (tentative_g < gcost[neighbor]) {
+        cameFrom.set(neighbor, node);
+        gcost[neighbor] = tentative_g;
+        fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
+        pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor });
+      }
+    }
+  }
+  return []; // Return an empty array if the target is not reachable
+}
+
+reconstruct_path(cameFrom, current) {
+  let total_path = [current];
+  while (cameFrom.has(current)) {
+    current = cameFrom.get(current);
+    total_path.unshift(current);
+  }
+  return total_path;
+}
+  
   astar_ans(src, food_pos_x, food_pos_y) {
     const n = this.graph.getHowManyNodes();
     let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
@@ -402,7 +428,7 @@ class Agent{
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
-
+    this.general_path = true;
     let path2 = this.dfs_all_path(this.my_node, food_x, food_y);
     console.log(path2);
 
@@ -415,7 +441,7 @@ class Agent{
       for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
           this.mark[i] = false;
       }
-
+      this.general_path = false;
       let path = this.dfs_ans(this.my_node, food_x, food_y);
       console.log(path);
 
@@ -426,7 +452,9 @@ class Agent{
       
       if(path.length > 0) this.how_many_foods++;
 
-      this.seek(ans, 0, 255, 0);
+      this.seek(ans, 0, 255, 0, () => {
+        this.updatePosition(ans) 
+      });
     });
   }
 
@@ -434,7 +462,7 @@ class Agent{
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
-
+    this.general_path = true;
     let path2 = this.bfs_all_path(this.my_node, food_x, food_y);
     console.log(path2);
 
@@ -442,12 +470,12 @@ class Agent{
     for (let i = 0; i < path2.length; i++) {
         ans2.push(this.graph.getListNodes()[path2[i]]);
     }
-
+    
     this.seek(ans2, 255, 0, 0, () => {
       for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
           this.mark[i] = false;
       }
-
+      this.general_path = false;
       let path = this.bfs_ans(this.my_node, food_x, food_y);
       console.log(path);
 
@@ -456,7 +484,9 @@ class Agent{
           ans.push(this.graph.getListNodes()[path[i]]);
       }
       if(path.length > 0) this.how_many_foods++;
-      this.seek(ans, 0, 255, 0);
+      this.seek(ans, 0, 255, 0, () => {
+        this.updatePosition(ans) 
+      });
     });
   }
   
@@ -464,7 +494,7 @@ class Agent{
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
-
+    this.general_path = true;
     let path2 = this.dijkstra_all_path(this.my_node, food_x, food_y);
     console.log(path2);
 
@@ -477,7 +507,7 @@ class Agent{
       for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
           this.mark[i] = false;
       }
-
+      this.general_path = false;
       let path = this.dijkstra_ans(this.my_node, food_x, food_y);
       console.log(path);
 
@@ -486,7 +516,9 @@ class Agent{
           ans.push(this.graph.getListNodes()[path[i]]);
       }
       if(path.length > 0) this.how_many_foods++;
-      this.seek(ans, 0, 255, 0);
+      this.seek(ans, 0, 255, 0, () => {
+        this.updatePosition(ans) 
+      });
     });
   }
 
@@ -494,7 +526,7 @@ class Agent{
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
-
+    this.general_path = true;
     let path2 = this.gbfs_all_path(this.my_node, food_x, food_y);
     console.log(path2);
 
@@ -507,7 +539,7 @@ class Agent{
       for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
           this.mark[i] = false;
       }
-
+      this.general_path = false;
       let path = this.gbfs_ans(this.my_node, food_x, food_y);
       console.log(path);
 
@@ -516,7 +548,9 @@ class Agent{
           ans.push(this.graph.getListNodes()[path[i]]);
       }
       if(path.length > 0) this.how_many_foods++;
-      this.seek(ans, 0, 255, 0);
+      this.seek(ans, 0, 255, 0, () => {
+        this.updatePosition(ans) 
+      });
     });
   }
 
@@ -524,7 +558,9 @@ class Agent{
     for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
       this.mark[i] = false;
     }
-
+  
+    this.general_path = true;
+    
     let path2 = this.astar_all_path(this.my_node, food_x, food_y);
     console.log(path2);
 
@@ -533,12 +569,14 @@ class Agent{
         ans2.push(this.graph.getListNodes()[path2[i]]);
     }
 
+    let path = []
+    
     this.seek(ans2, 255, 0, 0, () => {
       for (let i = 0; i < this.graph.getHowManyNodes(); i++) {
           this.mark[i] = false;
       }
-
-      let path = this.astar_ans(this.my_node, food_x, food_y);
+      this.general_path = false;
+      path = this.astar_ans(this.my_node, food_x, food_y);
       console.log(path);
 
       let ans = [];
@@ -546,8 +584,12 @@ class Agent{
           ans.push(this.graph.getListNodes()[path[i]]);
       }
       if(ans.length > 0) this.how_many_foods++;
-      this.seek(ans, 0, 255, 0);
+      this.seek(ans, 0, 255, 0, () => {
+        this.updatePosition(ans) 
+      });
+      
     });
+    
   }
   
   seek(movement_list, r, g, b, callback) {
@@ -556,7 +598,7 @@ class Agent{
     let current = 0;
     this.moving = true;
 
-    fill(r, g, b, 50);
+    fill(r, g, b, 30);
 
     const move = () => {
       if (current < movement_list.length && this.moving) {
@@ -564,7 +606,7 @@ class Agent{
           this.x1 = node.getX();
           this.y1 = node.getY();
           current++;
-          setTimeout(move, 100);
+          setTimeout(move, 200);
       } else {
           this.moving = false;
           if (callback) callback();
@@ -574,12 +616,56 @@ class Agent{
     move();
   }
   
+  updatePosition(movement_list, callback) {
+    if (movement_list.length === 0) return;
+
+    let current = 0;
+    this.moving = true;
+    let tms;
+
+    const move = () => {
+      if (current < movement_list.length && this.moving) {
+          let node = movement_list[current];
+          this.x = node.getX();
+          this.y = node.getY();
+          current++;
+          if(node.getTypeFloor() === 's'){
+            tms = 100
+          }
+          else if(node.getTypeFloor() === 'm'){
+            tms = 500
+          }
+          else if(node.getTypeFloor() === 'w'){
+            tms = 1000
+          }
+        
+          setTimeout(move, tms);
+      } else {
+          this.moving = false;
+          if (callback) callback();
+      }
+    };
+
+    move();
+  }
+
+  
   getIsMoving() {
     return this.moving;
   }
   
   getHowManyFoods() {
     return this.how_many_foods;
+  }
+  
+  itWasVisited(pp) {
+    for (let x of this.adj_visited) {  
+      if(Math.abs(x.first_ - pp.first_) <= 3 * this.hex_radius && Math.abs(x.second_ - pp.second_) <= 3 * this.hex_radius) {
+          return true;
+      }
+      
+    }
+    return false;
   }
 
 }
