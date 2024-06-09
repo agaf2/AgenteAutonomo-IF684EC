@@ -1,5 +1,5 @@
 let cols, rows;
-let hexRadius = 20; // raio de cada hexágono
+let hexRadius = 20// raio de cada hexágono
 let hexWidth, hexHeight;
 let w = 600; // largura do canvas
 let h = 600; // altura do canvas
