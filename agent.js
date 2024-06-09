@@ -20,13 +20,14 @@ class Agent{
 
 
   drawHexagon(x, y, radius) {
-    beginShape();
-    for (let i = 0; i < 6; i++) {
+   beginShape();
+    /*for (let i = 0; i < 6; i++) {
       let angle = TWO_PI / 6 * i;
       let xOffset = radius * cos(angle);
       let yOffset = radius * sin(angle);
       vertex(x + xOffset, y + yOffset);
-    }
+    }*/
+      circle(x, t, radius); 
     endShape(CLOSE);
   }
 
@@ -36,21 +37,21 @@ class Agent{
     this.drawHexagon(this.x1, this.y1, this.hex_radius)
       this.adj_visited.push(new Pair(this.x1, this.y1))
       //seta amarelo
-      fill(255, 255, 0, 3)
+      fill(255, 255, 0, 5)
       console.log("node adj here: " + this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)))
-      if(this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius), this.hex_radius)
-      if(this.itWasVisited(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius), this.hex_radius)
-      if(this.itWasVisited(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
-      if(this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
-      if(this.itWasVisited(this.x1, this.y1  - (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)) === true && (this.x1 + (3.0 * 0.5555 * this.hex_radius)) < 600) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius)) === true && (this.x1 -(3.0 * 0.5555 * this.hex_radius)) < 600) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  + (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius)) === true && (this.x1 - (3.0 * 0.5555 * this.hex_radius)) < 600) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius)) === true && (this.x1 + (3.0 * 0.5555 * this.hex_radius)) < 600) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1, this.y1  - (0.7 * this.hex_radius)) === true) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
       
-      if(this.itWasVisited(this.x1, this.y1  + (0.7 * this.hex_radius)) === false) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(this.x1, this.y1  + (0.7 * this.hex_radius)) === true) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
         //if(this.mark[this.graph.getNodeIndex(this.x1,this.y1  + (1.732 * this.hex_radius))] === false) this.drawHexagon(this.x1 , this.y1  + (1.732 * this.hex_radius), this.hex_radius)
       //this.drawHexagon(this.x1 , this.y1  -(2.1 * this.hex_radius), this.hex_radius)
       //this.drawHexagon(this.x1 , this.y1 +(2.1 * this.hex_radius), this.hex_radius)
 
 
-      fill(255,0,0, 30)
+      fill(255,0,0)
 
     }else {
           image(this.img, this.x, this.y);
@@ -598,7 +599,7 @@ reconstruct_path(cameFrom, current) {
     let current = 0;
     this.moving = true;
 
-    fill(r, g, b, 30);
+    fill(r, g, b);
 
     const move = () => {
       if (current < movement_list.length && this.moving) {
@@ -660,12 +661,12 @@ reconstruct_path(cameFrom, current) {
   
   itWasVisited(pp) {
     for (let x of this.adj_visited) {  
-      if(Math.abs(x.first_ - pp.first_) <= 3 * this.hex_radius && Math.abs(x.second_ - pp.second_) <= 3 * this.hex_radius) {
-          return true;
+      if(Math.abs(x.first_ - pp.first_) <= 2 * this.hex_radius && Math.abs(x.second_ - pp.second_) <= 2 * this.hex_radius) {
+          return false;
       }
       
     }
-    return false;
+    return true;
   }
 
 }
