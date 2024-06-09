@@ -38,7 +38,7 @@ class Agent{
       if(this.itWasVisited(new Pair(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius))) === true && (this.x1 - (3.0 * 0.5555 * this.hex_radius)) < 570) this.drawHexagon(this.x1 - (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
       if(this.itWasVisited(new Pair(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius))) === true && (this.x1 + (3.0 * 0.5555 * this.hex_radius)) < 570) this.drawHexagon(this.x1 + (3.0 * 0.5555 * this.hex_radius), this.y1  - (0.7 * this.hex_radius), this.hex_radius)
       if(this.itWasVisited(new Pair(this.x1, this.y1  - (0.7 * this.hex_radius))) === true) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
-      if(this.itWasVisited(new Pair(this.x1, this.y1  + (0.7 * this.hex_radius))) === true) this.drawHexagon(this.x1 , this.y1  - (1.732 * this.hex_radius), this.hex_radius)
+      if(this.itWasVisited(new Pair(this.x1, this.y1  + (0.7 * this.hex_radius))) === true) this.drawHexagon(this.x1 , this.y1  + (1.732 * this.hex_radius), this.hex_radius)
         //if(this.mark[this.graph.getNodeIndex(this.x1,this.y1  + (1.732 * this.hex_radius))] === false) this.drawHexagon(this.x1 , this.y1  + (1.732 * this.hex_radius), this.hex_radius)
       //this.drawHexagon(this.x1 , this.y1  -(2.1 * this.hex_radius), this.hex_radius)
       //this.drawHexagon(this.x1 , this.y1 +(2.1 * this.hex_radius), this.hex_radius)
