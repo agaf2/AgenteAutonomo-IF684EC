@@ -259,126 +259,103 @@ class Agent{
     return [];
   }
 
-  gbfs_all_path(startNode, food_pos_x, food_pos_y) {
-    let queue = [];
-    let path2 = [];
-    this.mark[startNode] = true;
-    queue.push({ node: startNode, path: [startNode] });
-    path2.push(startNode);
+  gbfs_all_path(src, food_pos_x, food_pos_y) {
+    const n = this.graph.getHowManyNodes();
+    let pq = [];
+    let visitedNodes = new Set();
+  
+    pq.push({ f: this.manhattanDistance(src, food_pos_x, food_pos_y), node: src, path: [src] });
+  
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.f - b.f);
+      let { node, path } = pq.shift();
+  
+      if (visitedNodes.has(node)) continue; 
 
-    while (queue.length > 0) {
-        let { node, path } = queue.shift();
-
-        if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
-            //console.log("heuristic");
-            //console.log("Path2: ", path2);
-            return path2;
-        }
-
-        let neighbors = this.graph.getGraph()[node];
-        neighbors.sort((a, b) => this.manhattanDistance(a.getSecond(), food_pos_x, food_pos_y) - this.manhattanDistance(b.getSecond(), food_pos_x, food_pos_y));
-
-        for (let neighbor of neighbors) {
-            let id_neighbor = neighbor.getSecond();
-            let weight_neighbor = neighbor.getFirst();
-
-            if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
-                this.mark[id_neighbor] = true;
-                queue.push({ node: id_neighbor, path: [...path, id_neighbor] });
-                path2.push(id_neighbor); // Adiciona o nó vizinho aos nós visitados
-            }
-        }
+      if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+        return path; 
+      }
+  
+      visitedNodes.add(node); 
+  
+      for (let edge of this.graph.getGraph()[node]){
+        let neighbor = edge.getSecond();
+  
+        let f = this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
+        pq.push({ f: f, node: neighbor, path: [...path, neighbor] });
+      }
     }
-
-    //console.log("Path2: ", path2);
-    return path2;
+  
+    return [];
   }
 
-  gbfs_ans(startNode, food_pos_x, food_pos_y) {
-    let queue = [];
-    let path = [];
-    this.mark[startNode] = true;
-    queue.push({ node: startNode, path: [startNode] });
+  gbfs_ans(src, food_pos_x, food_pos_y) {
+    const n = this.graph.getHowManyNodes();
+    let pq = [];
 
-    while (queue.length > 0) {
-        let { node, path } = queue.shift();
+    pq.push({ f: this.manhattanDistance(src, food_pos_x, food_pos_y), node: src, path: [src] });
 
-        if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
-            console.log("heuristic");
-            return path;
-        }
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.f - b.f);
+      let { node, path } = pq.shift();
 
-        let neighbors = this.graph.getGraph()[node];
-        neighbors.sort((a, b) => this.manhattanDistance(a.getSecond(), food_pos_x, food_pos_y) - this.manhattanDistance(b.getSecond(), food_pos_x, food_pos_y));
+      if(this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+        return path;
+      }
 
-        for (let neighbor of neighbors) {
-            let id_neighbor = neighbor.getSecond();
-            let weight_neighbor = neighbor.getFirst();
+      for(let edge of this.graph.getGraph()[node]){
+        let neighbor = edge.getSecond();
 
-            if (this.mark[id_neighbor] === false && weight_neighbor < 10000000009) {
-                this.mark[id_neighbor] = true;
-                queue.push({ node: id_neighbor, path: [...path, id_neighbor] });
-            }
-        }
+        let f = this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
+        pq.push({ f: f, node: neighbor, path: [...path, neighbor] });
+      }
     }
-
-    return path;
+    return []; // não foi encontrado caminho
   }
 
   astar_all_path(src, food_pos_x, food_pos_y) {
-  const n = this.graph.getHowManyNodes();
-  let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
-  let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
-  let pq = [];
+    const n = this.graph.getHowManyNodes();
+    let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
+    let fcost = Array(n).fill(Number.POSITIVE_INFINITY);
+    let pq = [];
 
-  gcost[src] = 0;
-  fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
+    gcost[src] = 0;
+    fcost[src] = this.manhattanDistance(src, food_pos_x, food_pos_y);
 
-  pq.push({ f: fcost[src], g: gcost[src], node: src });
+    pq.push({ f: fcost[src], g: gcost[src], node: src, path: [src] });
 
-  let visitedNodes = new Set(); // Stores all nodes visited during the search
-  let cameFrom = new Map(); // Stores the path taken to reach each node
+    let visitedNodes = new Set(); // Stores all nodes visited during the search
 
-  while (pq.length > 0) {
-    pq.sort((a, b) => a.f - b.f);
-    let { node, g } = pq.shift();
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.f - b.f);
+      let { node, g, path } = pq.shift();
 
-    if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
-      return this.reconstruct_path(cameFrom, node);
-    }
+      if (this.graph.getListNodes()[node].getX() === food_pos_x && this.graph.getListNodes()[node].getY() === food_pos_y) {
+        return path;
+      }
 
-    if (visitedNodes.has(node)) continue;
+      if (visitedNodes.has(node)) continue;
 
-    visitedNodes.add(node);
+      visitedNodes.add(node);
 
-    for (let edge of this.graph.getGraph()[node]) {
-      let weight = edge.getFirst();
-      let neighbor = edge.getSecond();
+      for (let edge of this.graph.getGraph()[node]) {
+        let weight = edge.getFirst();
+        let neighbor = edge.getSecond();
 
-      if (weight >= 10000000009) continue;
+        if (weight >= 10000000009) continue;
 
-      let tentative_g = g + weight;
+        let tentative_g = g + weight;
 
-      if (tentative_g < gcost[neighbor]) {
-        cameFrom.set(neighbor, node);
-        gcost[neighbor] = tentative_g;
-        fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
-        pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor });
+        if (tentative_g < gcost[neighbor]) {
+          gcost[neighbor] = tentative_g;
+          fcost[neighbor] = gcost[neighbor] + this.manhattanDistance(neighbor, food_pos_x, food_pos_y);
+          pq.push({ f: fcost[neighbor], g: gcost[neighbor], node: neighbor, path: [...path, neighbor] });
+        }
       }
     }
-  }
-  return []; // Return an empty array if the target is not reachable
-}
+    return []; // Return an empty array if the target is not reachable
+  } 
 
-reconstruct_path(cameFrom, current) {
-  let total_path = [current];
-  while (cameFrom.has(current)) {
-    current = cameFrom.get(current);
-    total_path.unshift(current);
-  }
-  return total_path;
-}
-  
   astar_ans(src, food_pos_x, food_pos_y) {
     const n = this.graph.getHowManyNodes();
     let gcost = Array(n).fill(Number.POSITIVE_INFINITY);
